@@ -3,4 +3,6 @@
 *.un~
 node_modules/
 spec/*.out
+*.swp
+flickr-conf.json
 

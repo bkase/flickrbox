@@ -1,0 +1,8 @@
+{
+    "dependencies": {
+        "oauth": "git://github.com/chbrown/node-oauth.git",
+        "form-data": "*",
+        "async": "*",
+        "request": "*"
+    }
+}
