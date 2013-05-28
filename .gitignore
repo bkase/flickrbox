@@ -1,0 +1,5 @@
+# gitignore
+
+*.un~
+node_modules/
+
