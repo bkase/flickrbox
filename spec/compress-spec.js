@@ -6,7 +6,7 @@ describe("Simple compression module", function() {
   it("should reduce the size of an ascii file", function() {
     var isDone = false;
     fs.createReadStream('test.txt')
-      .pipe(compress)
+      .pipe(compress())
       .pipe(fs.createWriteStream('test.txt.out'))
       .on('close', function() {
         fs.stat('test.txt', function(err, stats) {

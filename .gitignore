@@ -2,4 +2,5 @@
 
 *.un~
 node_modules/
+spec/*.out
 
