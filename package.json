@@ -3,6 +3,7 @@
         "oauth": "git://github.com/chbrown/node-oauth.git",
         "form-data": "*",
         "async": "*",
-        "request": "*"
+        "request": "*",
+        "watchr": "*"
     }
 }

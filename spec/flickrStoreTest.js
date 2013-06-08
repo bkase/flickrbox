@@ -14,14 +14,14 @@ var photo = {
 
 //store.deleteAll(console.log);
 
-//store.add(photo, function(err, id){
-//    if (err)
-//        throw err;
-//    console.log(id);
-//    store.get(id, function(err, res){
-//        res.pipe(fs.createWriteStream('test.png'));
-//    });
-//});
+store.add(photo, function(err, id){
+    if (err)
+        throw err;
+    console.log(id);
+    store.get(id, function(err, res){
+        res.pipe(fs.createWriteStream('test.png'));
+    });
+});
 
 //store.add(photo, function(err, id){
 //    if (err)
