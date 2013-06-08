@@ -24,53 +24,31 @@ function rands(n) {
 }
 
 describe('Stenography module', function() {
-  /*it('should not corrupt the data of an array', function() {
-    var isDone = false;
-    var size = 50;
-    var imageArr = rands(size);
-    var ref = { data: imageArr, width: size, height: 1 };
-    var s = fs.createReadStream('small.txt')
-      .pipe(esc.escape(97))
-      .pipe(steno.encode(ref, 97));
-    s.on('stenographed', function() {
-        // TODO: Rewrite with input as filestream, and buffer mod 4
-        console.log("Stenographed");
-        steno.decode(imageArr, 97)
-          .pipe(esc.unescape(97))
-          .pipe(fs.createWriteStream('small.txt.out'))
-          .on('close', function() {
-            console.log("Decoded");
-            fileCompare('small.txt', 'small.txt.out');
-            isDone = true;
-          });
-      });
-    waitsFor(function() { return isDone; });
-  });*/
-
   it('should not corrupt the data with a real png', function() {
     var isDone = false;
     console.log("Test starting");
-    fs.createReadStream('test.png')
+    fs.createReadStream('derp.png')
       .pipe(new PNG())
       .on('parsed', function() {
-        console.log("test.png parsed");
+        console.log("derp.png parsed");
         var img = this;
-        fs.createReadStream('derp.png')
+        fs.createReadStream('star@2x.png')
           .pipe(esc.escape(97))
           .pipe(steno.encode(img, 97))
           .on('stenographed', function() {
+            console.log("Stenographed done");
             img.pack()
-               .pipe(fs.createWriteStream('test-out.png'))
+               .pipe(fs.createWriteStream('derp-out.png'))
                .on('close', function() {
-                  fs.createReadStream('test-out.png')
+                  fs.createReadStream('derp-out.png')
                     .pipe(new PNG())
                     .on('parsed', function() {
                       steno.decode(this.data, 97)
                            .pipe(esc.unescape(97))
-                           .pipe(fs.createWriteStream('derp-out.png'))
+                           .pipe(fs.createWriteStream('star@2x-out.png'))
                            .on('close', function() {
                              console.log("Decoded");
-                             fileCompare('derp.png', 'derp-out.png');
+                             fileCompare('star@2x.png', 'star@2x-out.png');
                              isDone = true;
                            });
                     });

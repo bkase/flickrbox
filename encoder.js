@@ -1,22 +1,22 @@
-var compress = require('./compress.js');
-var steno = null;
+var steno = require('./steno.js');
+var esc = require('./escapist.js');
 var PNG = require('pngjs').PNG;
-var Q = require('q');
-var _ = require('lodash');
+var fs = require('fs');
 
-// returns a stream of a png image
-module.exports = function(fileStream, randomImage) {
-  var deferred = Q.defer();
+// calls callback with a stream of a png image
+module.exports = function(fileStream, randomImage, done) {
   randomImage
     .pipe(new PNG())
     .on('parsed', function() {
+      console.log("derp.png parsed");
+      var img = this;
       fileStream
-        .pipe(compress())
-        .pipe(steno(this.data))
+        .pipe(esc.escape(97))
+        .pipe(steno.encode(img, 97))
         .on('stenographed', function() {
-          deferred.resolve(this.pack());
-        }.bind(this));
+          console.log("Stenographed done");
+          done(img.pack())
+        });
     });
-  return deferred.promise;
 };
 
