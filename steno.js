@@ -76,6 +76,11 @@ function DecodeStream(imgData, escByt, opts) {
 }
 util.inherits(DecodeStream, Readable);
 
+DecodeStream.prototype._flush = function(done) {
+    this.emit('end');
+    done();
+  };
+
 DecodeStream.prototype._nextBit = function(dataByt) {
     return dataByt & mask;
   };
