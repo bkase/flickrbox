@@ -25,8 +25,8 @@ function create(store, size, stream, cb){
         var png = ImageMagick.crop(img.data, newW, newH);
         encoder(stream, png, function(encodedImgStream){
             var title = '' + Math.random();
-            // TODO: Figure out a way to convert `encodedImgStream`
-            //       to a streams1 compatible stream
+            // TODO(#3): Figure out a way to convert `encodedImgStream`
+            //           to a streams1 compatible stream
             var wrappedStream = new Readable().wrap(encodedImgStream);
             wrappedStream.pipe(fs.createWriteStream(title + '-out.png'))
                          .on('close', function(){
