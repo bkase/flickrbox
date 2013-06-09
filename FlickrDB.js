@@ -16,7 +16,6 @@ var FlickrDB = function(conf){
 }
 
 function create(store, size, stream, cb){
-    console.log(size);
     var imageFetcher = new ImageFetcher(10);
     var escapedMaxSize = Math.ceil(size*1.1); //BUG BUG BUG TODO 
     imageFetcher.getClosestMatch(escapedMaxSize, function(img){

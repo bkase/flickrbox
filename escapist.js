@@ -8,7 +8,6 @@ function EscapeStream(escapeByte, opts) {
 util.inherits(EscapeStream, Transform);
 
 EscapeStream.prototype._transform = function(chunk, encoding, done) {
-  console.log("Escaping");
   var buf = [];
   for (var i = 0; i < chunk.length; i++) {
     var byt = chunk[i];

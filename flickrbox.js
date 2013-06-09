@@ -23,11 +23,11 @@ var log = function(){ };
 if (debug)
     log = console.log.bind(console);
 
-var path = path.resolve(process.argv[2]);
-console.log(path);
+var pathname = path.resolve(process.argv[2]);
+console.log(pathname);
 
 watchr.watch({
-    paths: [ path ],
+    paths: [ pathname ],
     listeners: {
         log: function(logLevel){
             log('a log message occured:', arguments);
@@ -60,14 +60,15 @@ watchr.watch({
         //    }
         //},60*1000);
 
-        fs.writeFile(path + '/test.txt', "Hello Terrabyte of Space!");
+        fs.writeFile(pathname + '/test.txt', "Hello Terrabyte of Space!");
     }
 });
 
 function change(changeType, filePath, fileCurrentStat, filePreviousStat){
-    var localFilePath = filePath.replace(path, '');
+    var localFilePath = filePath.replace(pathname, '');
     if (changeType === 'create'){
         var stream = fs.createReadStream(filePath, { flags: 'r' });
+        console.log("Encoding " + path.basename(filePath) + "...");
         flickrDB.update(filePath, localFilePath, stream);
     }
 }

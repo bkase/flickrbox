@@ -18,7 +18,6 @@ util.inherits(EncodeStream, Transform);
 EncodeStream.prototype._nextBits = function(bits) {
     var i = this._pos;
     this._img.data[i] = (this._img.data[i] & invMask) | bits;
-    //console.log("Encoded to: " + this._img.data[i]);
     this._pos++;
   };
 
@@ -30,7 +29,6 @@ EncodeStream.prototype._nextByte = function(byt) {
   };
 
 EncodeStream.prototype._writeByte = function(byt) {
-    //console.log("Writing: " + byt);
     var i = this._pos
     this._img.data[i] = (this._img.data[i] & invMask) | ((byt >> 6) & mask);
     i++;
@@ -39,21 +37,15 @@ EncodeStream.prototype._writeByte = function(byt) {
     this._img.data[i] = (this._img.data[i] & invMask) | ((byt >> 2) & mask);
     i++;
     this._img.data[i] = (this._img.data[i] & invMask) | ((byt >> 0) & mask);
-    /*console.log(this._img.data[i-3],
-                this._img.data[i-2],
-                this._img.data[i-1],
-                this._img.data[i]);*/
     this._pos += 4; // hack to get to next byte
   };
 
 EncodeStream.prototype._writeFooter = function() {
-    console.log("Writing footer");
     this._writeByte(this._escByt);
     this._writeByte(0x00);
   };
 
 EncodeStream.prototype._transform = function(chunk, encoding, done) {
-    console.log("At least I transformed once");
     for (var b = 0; b < chunk.length; b++) {
       this._nextByte(chunk[b]);
     }
@@ -67,10 +59,8 @@ EncodeStream.prototype._flush = function(done) {
   };
 
 function DecodeStream(imgData, escByt, opts) {
-  console.log("%%%%%% DECODING");
   Readable.call(this, opts);
   this._data = imgData;
-  //console.log(this._data);
   this._escByt = escByt;
   this._pos = 0;
 }
@@ -95,7 +85,6 @@ DecodeStream.prototype._nextByt = function(a, b, c, d) {
   
 DecodeStream.prototype._read = function(size) {
     if (this._allDone) {
-      console.log("DONE!");
       this.push(null);
       return;
     }
@@ -110,13 +99,10 @@ DecodeStream.prototype._read = function(size) {
                               this._data[pos+1],
                               this._data[pos+2],
                               this._data[pos+3]);
-      //console.log("byt: " + String.fromCharCode(byt) + ", " + this._escByt);
       if (isLastEscape) {
         if (byt === this._escByt) {
-          console.log("Got double escape");
           buf.push(byt);
         } else if (byt === 0) {
-          console.log("Got END CHAR");
           this._allDone = true;
           this.emit('close');
           break;
@@ -124,7 +110,6 @@ DecodeStream.prototype._read = function(size) {
         isLastEscape = false;
       } else {
         if (byt === this._escByt) {
-          console.log("Got escape");
           isLastEscape = true;
           buf.push(byt);
         } else {

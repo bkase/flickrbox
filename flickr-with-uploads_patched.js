@@ -74,6 +74,9 @@ FlickrRequest.prototype.sendPOST = function() {
   var payload = {host: api_url_parts.host, path: '/services/upload/?format=json', headers: form.getHeaders(), method: 'POST'};
   var req = http.request(payload, function(res) { self.handleResponseStream(res); });
   form.pipe(req);
+  req.on('close', function() {
+        console.log("Finished encoding file");
+      });
 };
 
 FlickrRequest.prototype.handleResponseStream = function(response) {
