@@ -12,16 +12,16 @@ var photo = {
     photo: fs.createReadStream('/home/evan/tmp/background.png', { flags: 'r' })
 }
 
-//store.deleteAll(console.log);
+store.deleteAll(console.log);
 
-store.add(photo, function(err, id){
-    if (err)
-        throw err;
-    console.log(id);
-    store.get(id, function(err, res){
-        res.pipe(fs.createWriteStream('test.png'));
-    });
-});
+//store.add(photo, function(err, id){
+//    if (err)
+//        throw err;
+//    console.log(id);
+//    store.get(id, function(err, res){
+//        res.pipe(fs.createWriteStream('test.png'));
+//    });
+//});
 
 //store.add(photo, function(err, id){
 //    if (err)

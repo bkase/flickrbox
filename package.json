@@ -4,6 +4,7 @@
         "form-data": "*",
         "async": "*",
         "request": "*",
+        "express": "*",
         "watchr": "*"
     }
 }

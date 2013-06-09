@@ -3,13 +3,6 @@ var ImageDataFetcher = require('./ImageDataFetcher.js').ImageDataFetcher;
 
 var imageDataFetcher = new ImageDataFetcher(10);
 
-var EventEmitter = require('events').EventEmitter
-  , on = EventEmitter.prototype.on;
-EventEmitter.prototype.on = function () {
-    this._maxListeners = Infinity;
-    on.apply(this, arguments);
-}; 
-
 function ImageFetcher(cacheSize){
     this.cacheSize = cacheSize;
     this.numImageBeingRequested = 0;

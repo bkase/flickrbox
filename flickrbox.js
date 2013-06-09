@@ -1,3 +1,11 @@
+
+//var EventEmitter = require('events').EventEmitter;
+//var on = EventEmitter.prototype.on;
+//EventEmitter.prototype.on = function (){
+//    this._maxListeners = Infinity;
+//    on.apply(this, arguments);
+//}; 
+
 var watchr = require('watchr');
 var fs = require('fs');
 var path = require('path');
@@ -5,6 +13,10 @@ var path = require('path');
 var conf = require('./flickr-conf.json');
 var FlickrDB = require('./FlickrDB').FlickrDB;
 var flickrDB = new FlickrDB(conf);
+
+var FlickrFileBrowser = require('./FlickrFileBrowser').FlickrFileBrowser;
+
+var fileBrowser = new FlickrFileBrowser(conf.file_browser_port, flickrDB);
 
 var debug = process.argv[3] !== undefined;
 var log = function(){ };

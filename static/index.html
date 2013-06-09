@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> FlickrBox File Browser </title>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <script src="Server.js"></script>
+    <script>
+
+        var g = {};
+        Server.getDB(function(db){
+            g.db = db;
+            for (var file in db){
+                var a = document.createElement('a');
+                a.href = '#';
+                a.innerHTML = file;
+                document.body.appendChild(a);
+                document.body.appendChild(document.createElement('br'));
+                setupOnClick(a, file);
+            }
+        });
+
+        function setupOnClick(a, file){
+            a.addEventListener('click', function(){
+                console.log(file);
+                window.open('/file/' + file, '_blank');
+            });
+        }
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
