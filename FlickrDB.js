@@ -25,18 +25,21 @@ function create(store, size, stream, cb){
         var newH = Math.ceil(scale*img.h);
         var png = ImageMagick.crop(img.data, newW, newH);
         encoder(stream, png, function(encodedImgStream){
+            var title = '' + Math.random();
+            // TODO: Figure out a way to convert `encodedImgStream`
+            //       to a streams1 compatible stream
             var wrappedStream = new Readable().wrap(encodedImgStream);
-            wrappedStream.pipe(fs.createWriteStream(img.title + '-out.png')) //TODO add a random string
+            wrappedStream.pipe(fs.createWriteStream(title + '-out.png'))
                          .on('close', function(){
                             var photo = {
                                 title: img.title,
                                 description: "",
-                                photo: fs.createReadStream(img.title + '-out.png', { flags: 'r' })
+                                photo: fs.createReadStream(title + '-out.png', { flags: 'r' })
                             }
                             store.add(photo, function(err, id){
                                 if (err)
                                     throw err;
-                                fs.unlink(img.title + '-out.png');
+                                fs.unlink(title + '-out.png');
                                 cb(id);
                             });
                          });
