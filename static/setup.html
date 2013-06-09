@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> FlickrBox Setup </title>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <style>
+        iframe {
+            width: 20em;
+            height: 20em;
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            padding-left: 1em;
+        }
+
+        .stage {
+            border: 1px solid black;
+            padding: 1em;
+            margin-bottom: 1em;
+            margin-left: 1em;
+            border-right: none;
+        }
+
+        .stepTitle {
+            font-weight: bold;
+        }
+
+        .stageInputs {
+            padding-left: 4em;
+        }
+
+        .stageInputs > input {
+            margin-left: 2em;
+        }
+    </style>
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha1.js"></script>
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
+    <script>window.addEventListener('load', function(){
+
+        var apiKeyInput = document.getElementById("apiKey");
+        var apiSecretInput = document.getElementById("apiSecret");
+
+        var oauthRequestKeyInput = document.getElementById("oauthRequestKey");
+        var oauthRequestSecretInput = document.getElementById("oauthRequestSecret");
+
+        var authorizationKeyInput = document.getElementById('authorizationKey');
+
+        var oauthKeyInput = document.getElementById("oauthKey");
+        var oauthSecretInput = document.getElementById("oauthSecret");
+
+        function strcmp(a, b){
+            if (a.toString() < b.toString()) return -1;
+            if (a.toString() > b.toString()) return 1;
+            return 0;
+        }
+
+        function genSignature(path, params, appSecret, tokenSecret){
+            var url = "GET&";
+            url += window.encodeURIComponent(path);
+            url += '&';
+            params = params.concat().sort(function(a, b){ return strcmp(a.substring(1), b.substring(1)); });
+            for (var i = 0; i < params.length; i++){
+                var param;
+                if (i === 0)
+                    param = params[i].substring(1);
+                else
+                    param = params[i];
+                param = param.replace('?', '&');
+                url += window.encodeURIComponent(param);
+            }
+            console.log('surl', url);
+
+            var key;
+            if (tokenSecret)
+                key = window.encodeURIComponent(appSecret) + "&" + window.encodeURIComponent(tokenSecret);
+            else 
+                key = window.encodeURIComponent(appSecret) + "&";
+            var hash = CryptoJS.HmacSHA1(url, key);
+            var sig = CryptoJS.enc.Base64.stringify(hash);
+            return window.encodeURIComponent(sig);
+        }
+
+        window.generateOAuthRequestKey = function(){
+            var params = [
+                "?oauth_nonce=" + Math.floor(Math.random()*100000000),
+                "&oauth_timestamp=" + Math.floor(Date.now()/1000),
+                "&oauth_consumer_key=" + apiKeyInput.value,
+                "&oauth_callback=oob",
+                "&oauth_signature_method=HMAC-SHA1",
+                "&oauth_version=1.0",
+            ];
+
+            var path = "http://www.flickr.com/services/oauth/request_token";
+            var sig = genSignature(path, params, apiSecretInput.value);
+
+            var url = path;
+            for (var i = 0; i < params.length; i++){
+                url += params[i];
+            }
+
+            url += '&oauth_signature=' + sig;
+
+            console.log(url);
+
+            window.open(url, '_blank');
+
+        }
+
+        window.authorizeOAuthRequestKey = function(){
+            var url = "http://www.flickr.com/services/oauth/authorize?oauth_token=" + oauthRequestKeyInput.value;
+            window.open(url, '_blank');
+        }
+
+        window.generateOAuthKey = function(){
+            var params = [
+                "?oauth_nonce=" + Math.floor(Math.random()*100000000),
+                "&oauth_timestamp=" + Math.floor(Date.now()/1000),
+                "&oauth_consumer_key=" + apiKeyInput.value,
+                "&oauth_verifier=" + authorizationKeyInput.value,
+                "&oauth_signature_method=HMAC-SHA1",
+                "&oauth_version=1.0",
+                "&oauth_token=" + oauthRequestKeyInput.value
+            ];
+            var path = "http://www.flickr.com/services/oauth/access_token";
+            var sig = genSignature(path, params, apiSecretInput.value, oauthRequestSecretInput.value);
+
+            var url = path;
+            for (var i = 0; i < params.length; i++){
+                url += params[i];
+            }
+
+            url += '&oauth_signature=' + sig;
+
+            console.log(url);
+
+            window.open(url, '_blank');
+        }
+    });</script>
+</head>
+<body>
+
+<h1>
+    FlickrBox Setup
+</h1>
+
+<p>
+    you're just a few moments away from a terabyte of flickr backed storage!
+</p>
+
+<div class="stage">
+    <span class="stepTitle">Step 1: </span><a href="http://www.flickr.com/services/api/keys/apply/" target="_blank"> register for an API key </a>
+    <div class="stageInputs">
+        <br>
+        <div> api key:</div><input id="apiKey" type="text"></input>
+        <br>
+        <div> api secret: </div><input id="apiSecret" type="text"></input>
+    </div>
+</div>
+
+<div class="stage">
+    <span class="stepTitle">Step 2: </span><a href="javascript:generateOAuthRequestKey()"> generate OAuth request key </a>
+    <div class="stageInputs">
+        <br>
+        <div> oauth request key:</div><input id="oauthRequestKey" type="text"></input>
+        <br>
+        <div> oauth request secret: </div><input id="oauthRequestSecret" type="text"></input>
+    </div>
+</div>
+
+<div class="stage">
+    <span class="stepTitle">Step 3: </span><a href="javascript:authorizeOAuthRequestKey()"> authorize OAuth request key </a>
+    <div class="stageInputs">
+        <br>
+        <div> authorization key:</div><input id="authorizationKey" type="text"></input>
+    </div>
+</div>
+
+<div class="stage">
+    <span class="stepTitle">Step 4: </span><a href="javascript:generateOAuthKey()"> generate OAuth key </a>
+    <div class="stageInputs">
+        <br>
+        <div> oauth key:</div><input id="oauthKey" type="text"></input>
+        <br>
+        <div> oauth secret: </div><input id="oauthSecret" type="text"></input>
+    </div>
+</div>
+
+<div class="stage">
+    <span class="stepTitle">Step 5: </span><span> choose folder to backup </span>
+    <div class="stageInputs">
+        <br>
+        <div> full folder path:</div><input type="text"></input>
+    </div>
+</div>
+
+<div class="stage">
+    <button>
+        done!
+    </button>
+</div>
+
+    
+</body>
+</html>
+
+
