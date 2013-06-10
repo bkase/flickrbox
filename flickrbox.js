@@ -37,6 +37,7 @@ function compareDBWithDir(){
         ensureInDB(filename);
       }
     });
+    // TODO delete from DB if deleted 
 }
 
 function ensureInDB(filePath){
