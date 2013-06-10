@@ -51,20 +51,13 @@ watchr.watch({
             log('watching everything completed', watchers);
         }
 
-        //// Close watchers after 60 seconds
-        //setTimeout(function(){
-        //    var i;
-        //    console.log('Stop watching our paths');
-        //    for ( i=0;  i<watchers.length; i++ ) {
-        //        watchers[i].close();
-        //    }
-        //},60*1000);
-
         fs.writeFile(pathname + '/test.txt', "Hello Terrabyte of Space!");
     }
 });
 
 function change(changeType, filePath, fileCurrentStat, filePreviousStat){
+    if (fileCurrentStat !== null && fileCurrentStat.isDirectory())
+        return;
     var localFilePath = filePath.replace(pathname, '');
     if (changeType === 'create'){
         var stream = fs.createReadStream(filePath, { flags: 'r' });
