@@ -69,16 +69,21 @@ FlickrDB.prototype = {
         }
         else {
             //update
-            console.log('update');
-            var id = this.db[localPath];
+            var oldId = this.db[localPath];
             this.db[localPath] = 'in progress';
-            this.store.get(id, function(photo){
-                
-            });
+            getFileSize(fullPath, function(size){
+                create(this.store, size, stream, function(id){
+                    this.db[localPath] = id;
+                    this.saveToDisk();
+                    this.store.delete(oldId);
+                }.bind(this));
+            }.bind(this));
         }
     },
-    delete: function(){
-
+    delete: function(localPath){
+        this.store.delete(this.db[localPath]);
+        delete this.db[localPath];
+        this.saveToDisk();
     },
     loadFromDisk: function(){
         try {

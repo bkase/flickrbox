@@ -23,6 +23,8 @@ function FlickrRequest(client, method, params, signed_in, callback) {
   this.method = method;
   this.params = params;
   this.signed_in = signed_in;
+  if (callback === undefined)
+      callback = function(){ };
   this.callback = callback;
 }
 FlickrRequest.prototype.queryString = function() {

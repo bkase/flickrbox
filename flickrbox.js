@@ -51,6 +51,7 @@ watchr.watch({
             log('watching everything completed', watchers);
         }
 
+        //fs.unlinkFileSync(pathname + '/test.txt');
         fs.writeFile(pathname + '/test.txt', "Hello Terrabyte of Space!");
     }
 });
@@ -59,9 +60,12 @@ function change(changeType, filePath, fileCurrentStat, filePreviousStat){
     if (fileCurrentStat !== null && fileCurrentStat.isDirectory())
         return;
     var localFilePath = filePath.replace(pathname, '');
-    if (changeType === 'create'){
+    console.log(changeType, localFilePath);
+    if (changeType === 'create' || changeType === 'update'){
         var stream = fs.createReadStream(filePath, { flags: 'r' });
-        console.log("Encoding " + path.basename(filePath) + "...");
         flickrDB.update(filePath, localFilePath, stream);
+    }
+    else if (changeType === 'delete'){
+        flickrDB.delete(localFilePath);
     }
 }
