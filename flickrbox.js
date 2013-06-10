@@ -9,6 +9,7 @@
 var watchr = require('watchr');
 var fs = require('fs');
 var path = require('path');
+var execFile = require('child_process').execFile;
 
 var conf = require('./flickr-conf.json');
 var FlickrDB = require('./FlickrDB').FlickrDB;
@@ -24,7 +25,37 @@ if (debug)
     log = console.log.bind(console);
 
 var pathname = path.resolve(process.argv[2]);
-console.log(pathname);
+console.log('watching', pathname);
+
+function compareDBWithDir(){
+    execFile('find', [ pathname ], function(err, stdout, stderr) {
+      var filenames = stdout.split('\n');
+      for (var i = 0; i < filenames.length; i++){
+        var filename = filenames[i];
+        if (filename.length === 0)
+            continue;
+        ensureInDB(filename);
+      }
+    });
+}
+
+function ensureInDB(filePath){
+    // TODO store in DB md5, update if md5 changed
+    fs.stat(filePath, function (err, stats) {
+        if (err)
+            throw err;
+        if (!stats.isDirectory()){
+            var localFilePath = filePath.replace(pathname, '');
+            if (flickrDB.db[localFilePath] === undefined){
+                var stream = fs.createReadStream(filePath, { flags: 'r' });
+                flickrDB.update(filePath, localFilePath, stream);
+            }
+        }
+    });
+}
+
+compareDBWithDir();
+
 
 watchr.watch({
     paths: [ pathname ],
