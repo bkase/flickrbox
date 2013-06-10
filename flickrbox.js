@@ -50,9 +50,6 @@ watchr.watch({
         } else {
             log('watching everything completed', watchers);
         }
-
-        //fs.unlinkFileSync(pathname + '/test.txt');
-        fs.writeFile(pathname + '/test.txt', "Hello Terrabyte of Space!");
     }
 });
 

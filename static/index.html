@@ -11,7 +11,10 @@
             g.db = db;
             for (var file in db){
                 var a = document.createElement('a');
-                a.href = '#';
+                var id = g.db[file];
+                if (id !== 'in progress'){
+                    a.href = '#';
+                }
                 a.innerHTML = file;
                 document.body.appendChild(a);
                 document.body.appendChild(document.createElement('br'));
@@ -21,8 +24,8 @@
 
         function setupOnClick(a, file){
             a.addEventListener('click', function(){
-                console.log(file);
-                window.open('/file/' + file, '_blank');
+                if (g.db[file] !== 'in progress')
+                    window.open('/file/' + file, '_blank');
             });
         }
     </script>

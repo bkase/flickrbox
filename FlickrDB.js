@@ -13,7 +13,12 @@ var FlickrDB = function(conf){
     this.db = {};
     this.saving = false;
     this.loadFromDisk();
-    // TODO reset in progresses
+    for (var file in this.db){
+        if (this.db[file] === 'in progress'){
+            delete this.db[file];
+        }
+    }
+
 }
 
 function create(store, size, stream, cb){
