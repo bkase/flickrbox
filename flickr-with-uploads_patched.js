@@ -1,3 +1,7 @@
+/*
+    a modification of the flickr library found here: https://github.com/chbrown/flickr-with-uploads
+*/
+
 var http = require('http'),
   url = require('url'),
   querystring = require('querystring'),
