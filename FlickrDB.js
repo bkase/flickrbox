@@ -85,6 +85,10 @@ FlickrDB.prototype = {
         delete this.db[localPath];
         this.saveToDisk();
     },
+    hasReady: function(localPath){
+        return  this.db[localPath] !== undefined &&
+                this.db[localPath] !== "in progress";
+    },
     loadFromDisk: function(){
         try {
             var contents = fs.readFileSync('db.json');

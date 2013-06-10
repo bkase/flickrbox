@@ -16,14 +16,19 @@ function FlickrFileBrowser(port, flickrDB){
 
     app.get('/file/*', function(req, res){
         var localFilePath = req.url.substring(6);
-        this.flickrDB.get(localFilePath, function(err, stream){
-            if (err)
-                throw err;
-            decoder(stream,
-                function(decodedFileStream) {
-                    decodedFileStream.pipe(res);
-                });
-        });
+        if (this.flickrDB.hasReady(localFilePath)){
+            this.flickrDB.get(localFilePath, function(err, stream){
+                if (err)
+                    throw err;
+                decoder(stream,
+                    function(decodedFileStream) {
+                        decodedFileStream.pipe(res);
+                    });
+            });
+        }
+        else {
+            res.send("updating file");
+        }
     }.bind(this));
 }
 
