@@ -13,6 +13,7 @@ var FlickrDB = function(conf){
     this.db = {};
     this.saving = false;
     this.loadFromDisk();
+    // TODO reset in progresses
 }
 
 function create(store, size, stream, cb){
@@ -24,21 +25,21 @@ function create(store, size, stream, cb){
         var newH = Math.ceil(scale*img.h);
         var png = ImageMagick.crop(img.data, newW, newH);
         encoder(stream, png, function(encodedImgStream){
-            var title = '' + Math.random();
+            var tempFileName = Math.random() + '-out.png';
             // TODO(#3): Figure out a way to convert `encodedImgStream`
             //           to a streams1 compatible stream
             var wrappedStream = new Readable().wrap(encodedImgStream);
-            wrappedStream.pipe(fs.createWriteStream(title + '-out.png'))
+            wrappedStream.pipe(fs.createWriteStream(tempFileName))
                          .on('close', function(){
                             var photo = {
                                 title: img.title,
                                 description: "",
-                                photo: fs.createReadStream(title + '-out.png', { flags: 'r' })
+                                photo: fs.createReadStream(tempFileName, { flags: 'r' })
                             }
                             store.add(photo, function(err, id){
                                 if (err)
                                     throw err;
-                                fs.unlink(title + '-out.png');
+                                fs.unlink(tempFileName);
                                 cb(id);
                             });
                          });
@@ -68,6 +69,12 @@ FlickrDB.prototype = {
         }
         else {
             //update
+            console.log('update');
+            var id = this.db[localPath];
+            this.db[localPath] = 'in progress';
+            this.store.get(id, function(photo){
+                
+            });
         }
     },
     delete: function(){
