@@ -4,6 +4,7 @@ var app = express();
 var request = require('request');
 
 var decoder = require('./decoder');
+var crypto = require('crypto');
 
 app.use(express.bodyParser());
 
@@ -30,9 +31,11 @@ function FlickrFileBrowser(port, flickrDB){
                     throw err;
                 decoder(stream,
                     function(decodedFileStream) {
-                        decodedFileStream.pipe(res);
-                    });
-            });
+                        decodedFileStream
+                          .pipe(crypto.createDecipher('aes-256-cbc', this.flickrDB.conf.crypto_key))
+                          .pipe(res);
+                    }.bind(this));
+            }.bind(this));
         }
         else {
             res.send("updating file");
