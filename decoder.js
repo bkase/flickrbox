@@ -1,6 +1,7 @@
 var steno = require('./steno.js');
 var esc = require('./escapist.js');
 var PNG = require('pngjs').PNG;
+var _ = require('lodash');
 
 // calls callback with a stream of decoded data
 module.exports = function(encodedImageStream, done) {

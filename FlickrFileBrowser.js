@@ -2,14 +2,12 @@ var fs = require('fs');
 var express = require("express");
 var app = express();
 var request = require('request');
-var crypto = require("crypto");
 
 var decoder = require('./decoder');
 
 app.use(express.bodyParser());
 
-function FlickrFileBrowser(conf, flickrDB){
-    var port = conf.file_browser_port;
+function FlickrFileBrowser(port, flickrDB){
     this.flickrDB = flickrDB;
     app.listen(port);
 
@@ -28,15 +26,11 @@ function FlickrFileBrowser(conf, flickrDB){
         var localFilePath = req.url.substring(6);
         if (this.flickrDB.hasReady(localFilePath)){
             this.flickrDB.get(localFilePath, function(err, stream){
-                console.log("Got file successfully");
                 if (err)
                     throw err;
                 decoder(stream,
                     function(decodedFileStream) {
-                        console.log("Decoded file");
-                        decodedFileStream
-                            .pipe(crypto.createDecipher('aes-256-cbc', conf.crypto_key))
-                            .pipe(res);
+                        decodedFileStream.pipe(res);
                     });
             });
         }
