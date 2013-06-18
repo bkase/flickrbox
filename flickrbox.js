@@ -1,17 +1,17 @@
 
-//var EventEmitter = require('events').EventEmitter;
-//var on = EventEmitter.prototype.on;
-//EventEmitter.prototype.on = function (){
-//    this._maxListeners = Infinity;
-//    on.apply(this, arguments);
-//}; 
+(function(){
+    var EventEmitter = require('events').EventEmitter;
+    var on = EventEmitter.prototype.on;
+    EventEmitter.prototype.on = function (){
+        this._maxListeners = Infinity;
+        return on.apply(this, arguments);
+    }; 
+})();
 
 var watchr = require('watchr');
 var fs = require('fs');
 var path = require('path');
 var execFile = require('child_process').execFile;
-
-//var conf = require('./flickr-conf.json');
 
 var debug = process.argv[2] === 'DEBUG' || process.argv[3] === 'DEBUG';
 var log = function(){ };
