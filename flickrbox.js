@@ -67,7 +67,11 @@ function init(){
             ensureInDB(filename);
           }
         });
-        // TODO delete from DB if deleted 
+        for (var localFilePath in flickrDB.db){
+            if (!fs.existsSync(pathname + '/' + localFilePath)){
+                flickrDB.delete(localFilePath);
+            }
+        }
     }
 
     function ensureInDB(filePath){
