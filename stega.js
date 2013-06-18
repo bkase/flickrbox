@@ -54,7 +54,7 @@ EncodeStream.prototype._transform = function(chunk, encoding, done) {
 
 EncodeStream.prototype._flush = function(done) {
     this._writeFooter();
-    this.emit('stenographed');
+    this.emit('steganographed');
     done();
   };
 
