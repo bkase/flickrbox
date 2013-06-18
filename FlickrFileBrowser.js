@@ -42,6 +42,18 @@ function FlickrFileBrowser(port, flickrDB){
         }
     }.bind(this));
 
+    app.get('/delete/*', function(req, res){
+        var localFilePath = req.url.substring(8);
+        if (this.flickrDB.hasReady(localFilePath)){
+            this.flickrDB.delete(localFilePath);
+            res.send('file deleted');
+        }
+        else {
+            res.send("updating file");
+        }
+
+    }.bind(this));
+
     app.get('/proxy/*', function(req, res){
         var url = decodeURIComponent(req.url.substring(7));
         console.log(url);

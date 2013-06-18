@@ -27,15 +27,19 @@ function getUserHome() {
 var confPath = getUserHome() + '/.flickrbox-conf.json';
 
 var pathname;
+var flickrDB
+var fileBrowser;
+
+var FlickrDB = require('./FlickrDB').FlickrDB;
 
 if (!fs.existsSync(confPath)){
     var port = (process.argv[2] !== 'DEBUG' && process.argv[2]) || 8080;
-    var fileBrowser = new FlickrFileBrowser(port, undefined);
+    console.log('go to localhost:' + port + '/ in a browser to setup');
+    fileBrowser = new FlickrFileBrowser(port, undefined);
     fileBrowser.onconfig = function(conf){
         fs.writeFileSync(confPath, JSON.stringify(conf));
         pathname = conf.file_pathname;
-        var FlickrDB = require('./FlickrDB').FlickrDB;
-        var flickrDB = new FlickrDB(conf);
+        flickrDB = new FlickrDB(conf);
         fileBrowser.flickrDB = flickrDB;
         init();
     }
@@ -43,9 +47,8 @@ if (!fs.existsSync(confPath)){
 else {
     var conf = require(confPath);
     pathname = conf.file_pathname;
-    var FlickrDB = require('./FlickrDB').FlickrDB;
-    var flickrDB = new FlickrDB(conf);
-    var fileBrowser = new FlickrFileBrowser(conf.file_browser_port, flickrDB);
+    flickrDB = new FlickrDB(conf);
+    fileBrowser = new FlickrFileBrowser(conf.file_browser_port, flickrDB);
     init();
 }
 

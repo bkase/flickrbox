@@ -7,6 +7,9 @@ var Server = {
     requestLink: function(fileId, done){
         this.get('/file/' + fileId, done);
     },
+    deleteFile: function(file, done){
+        this.get('/delete/' + file, done);
+    },
     sendConf: function(conf){
         this.get('/config/' + window.encodeURIComponent(JSON.stringify(conf)));
     },

@@ -2,6 +2,8 @@
 <html>
 <head>
     <title> FlickrBox File Browser </title>
+    <link rel="stylesheet" type="text/css" href="reset.css"></link>
+    <link rel="stylesheet" type="text/css" href="style.css"></link>
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
     <script src="Server.js"></script>
     <script>
@@ -10,14 +12,20 @@
         Server.getDB(function(db){
             g.db = db;
             for (var file in db){
+                var div = document.createElement('div');
                 var a = document.createElement('a');
                 var id = g.db[file];
                 if (id !== 'in progress'){
                     a.href = '#';
                 }
                 a.innerHTML = file;
-                document.body.appendChild(a);
-                document.body.appendChild(document.createElement('br'));
+
+                var del = document.createElement('button');
+                del.innerHTML = 'delete';
+                setupOnDel(del, div, file);
+                div.appendChild(del);
+                div.appendChild(a);
+                document.body.appendChild(div);
                 setupOnClick(a, file);
             }
         });
@@ -26,6 +34,14 @@
             a.addEventListener('click', function(){
                 if (g.db[file] !== 'in progress')
                     window.open('/file/' + file, '_blank');
+            });
+        }
+        function setupOnDel(del, div, file){
+            del.addEventListener('click', function(){
+                if (g.db[file] !== 'in progress'){
+                    Server.deleteFile(file);
+                    div.parentNode.removeChild(div);
+                }
             });
         }
     </script>

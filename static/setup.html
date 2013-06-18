@@ -118,7 +118,7 @@
         }
 
         window.authorizeOAuthRequestKey = function(){
-            var url = "http://www.flickr.com/services/oauth/authorize?oauth_token=" + oauthRequestKeyInput.value;
+            var url = "http://www.flickr.com/services/oauth/authorize?oauth_token=" + oauthRequestKeyInput.value + "&perms=delete";
             window.open(url, '_blank');
         }
 
@@ -242,7 +242,7 @@
     <span class="stepTitle">Step 8: </span><span> enter a name for the folder that will hold your data photos </span>
     <div class="stageInputs">
         <br>
-        <div> key:</div><input id="photosetName" type="text" value="FlickrBox"></input>
+        <div> folder name:</div><input id="photosetName" type="text" value="FlickrBox"></input>
     </div>
 </div>
 
