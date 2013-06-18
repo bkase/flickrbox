@@ -1,4 +1,4 @@
-var stega = require('../stega.js');
+var steno = require('../steno.js');
 var esc = require('../escapist.js');
 var PNG = require('pngjs').PNG;
 var fs = require('fs');
@@ -23,7 +23,7 @@ function rands(n) {
   return arr;
 }
 
-describe('Steganography module', function() {
+describe('Stenography module', function() {
   it('should not corrupt the data with a real png', function() {
     var isDone = false;
     console.log("Test starting");
@@ -34,16 +34,16 @@ describe('Steganography module', function() {
         var img = this;
         fs.createReadStream('star@2x.png')
           .pipe(esc.escape(97))
-          .pipe(stega.encode(img, 97))
-          .on('steganographed', function() {
-            console.log("Steganographed done");
+          .pipe(steno.encode(img, 97))
+          .on('stenographed', function() {
+            console.log("Stenographed done");
             img.pack()
                .pipe(fs.createWriteStream('derp-out.png'))
                .on('close', function() {
                   fs.createReadStream('derp-out.png')
                     .pipe(new PNG())
                     .on('parsed', function() {
-                      stega.decode(this.data, 97)
+                      steno.decode(this.data, 97)
                            .pipe(esc.unescape(97))
                            .pipe(fs.createWriteStream('star@2x-out.png'))
                            .on('close', function() {
