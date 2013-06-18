@@ -1,4 +1,4 @@
-var steno = require('./steno.js');
+var stega = require('./stega.js');
 var esc = require('./escapist.js');
 var PNG = require('pngjs').PNG;
 
@@ -9,7 +9,7 @@ module.exports = function(encodedImageStream, done) {
     .on('parsed', function() {
       console.log("Image is parsed");
       var fileStream = 
-        steno.decode(this.data, 97)
+        stega.decode(this.data, 97)
              .pipe(esc.unescape(97));
 
       done(fileStream);
