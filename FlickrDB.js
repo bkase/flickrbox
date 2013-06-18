@@ -1,6 +1,7 @@
 var fs = require('fs');
 var FlickrStore = require('./FlickrStore.js').FlickrStore;
 var ImageFetcher = require('./ImageFetcher.js').ImageFetcher;
+var crypto = require('crypto');
 
 var ImageMagick = require('./ImageMagick.js');
 
@@ -9,6 +10,7 @@ var encoder = require('./encoder');
 var Readable = require('stream').Readable;
 
 var FlickrDB = function(conf){
+    this.conf = conf;
     this.store = new FlickrStore(conf);
     this.db = {};
     this.saving = false;
@@ -21,27 +23,31 @@ var FlickrDB = function(conf){
 
 }
 
-function create(store, size, stream, cb){
+function create(store, size, stream, key, cb){
     var imageFetcher = new ImageFetcher(10);
-    var escapedMaxSize = Math.ceil(size*1.1); //BUG BUG BUG TODO 
+    var escapedMaxSize = Math.ceil(size*1.2); //BUG BUG BUG TODO
     imageFetcher.getClosestMatch(escapedMaxSize, function(img){
         var scale = Math.sqrt(escapedMaxSize/(img.w*img.h));
         var newW = Math.ceil(scale*img.w);
         var newH = Math.ceil(scale*img.h);
         var png = ImageMagick.crop(img.data, newW, newH);
-        encoder(stream, png, function(encodedImgStream){
+        var encryptedStream = stream.pipe(crypto.createCipher('aes-256-cbc', key));
+        encoder(encryptedStream, png, function(encodedImgStream){
+          console.log("Encoded successfully");
             var tempFileName = Math.random() + '-out.png';
             // TODO(#3): Figure out a way to convert `encodedImgStream`
             //           to a streams1 compatible stream
             var wrappedStream = new Readable().wrap(encodedImgStream);
             wrappedStream.pipe(fs.createWriteStream(tempFileName))
                          .on('close', function(){
+                            console.log("Wrote successfully");
                             var photo = {
                                 title: img.title,
                                 description: "",
                                 photo: fs.createReadStream(tempFileName, { flags: 'r' })
                             }
                             store.add(photo, function(err, id){
+                                console.log("Added successfully");
                                 if (err)
                                     throw err;
                                 fs.unlink(tempFileName);
@@ -49,7 +55,7 @@ function create(store, size, stream, cb){
                             });
                          });
         });
-    });
+    }.bind(this));
 }
 
 function getFileSize(file, cb){
@@ -62,11 +68,12 @@ function getFileSize(file, cb){
 
 FlickrDB.prototype = {
     update: function(fullPath, localPath, stream){
+        var key = this.conf.crypto_key;
         if (this.db[localPath] === undefined){
             //create
             this.db[localPath] = 'in progress';
             getFileSize(fullPath, function(size){
-                create(this.store, size, stream, function(id){
+                create(this.store, size, stream, key, function(id){
                     this.db[localPath] = id;
                     this.saveToDisk();
                 }.bind(this));
@@ -77,7 +84,7 @@ FlickrDB.prototype = {
             var oldId = this.db[localPath];
             this.db[localPath] = 'in progress';
             getFileSize(fullPath, function(size){
-                create(this.store, size, stream, function(id){
+                create(this.store, size, stream, key, function(id){
                     this.db[localPath] = id;
                     this.saveToDisk();
                     this.store.delete(oldId);
